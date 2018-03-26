@@ -1,0 +1,23 @@
+{
+  "name": "ticTacToe",
+  "authors": [
+    "Haridas <haridasnykiel@gmail.com>"
+  ],
+  "description": "FCC project",
+  "main": "index.html",
+  "keywords": [
+    "game"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.3.1"
+  }
+}
