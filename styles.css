@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 24px;
+}
+
+body {
+  background-color: #e6ffe6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2em;
+  color: #003300;
+}
+
+#selections {
+  display: flex;
+  flex-direction: column;
+}
+
+.main_selectors {
+  display: flex;
+}
+
+.main_selectors div {
+  width: 2em;
+  height: 2em;
+  background-color: #006600;
+  margin: 1em;
+}
