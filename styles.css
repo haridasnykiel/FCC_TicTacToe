@@ -16,11 +16,23 @@ h1 {
   color: #003300;
 }
 
-#selections {
+.container {
+  border: 5px solid #008000;
+  width: 20em;
+  height: 15em;
   display: flex;
+  align-items: center;
   flex-direction: column;
+  background-color: 
 }
 
+/* player Selection section */
+
+
+
+/* Symbol Selection section */
+
+/* Board section */
 .main_selectors {
   display: flex;
 }
@@ -29,5 +41,5 @@ h1 {
   width: 2em;
   height: 2em;
   background-color: #006600;
-  margin: 1em;
+  margin: 0.5em;
 }
