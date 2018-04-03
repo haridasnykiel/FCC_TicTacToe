@@ -18,19 +18,76 @@ h1 {
 
 .container {
   border: 5px solid #008000;
-  width: 20em;
-  height: 15em;
+  width: 40em;
+  height: 25em;
   display: flex;
   align-items: center;
   flex-direction: column;
-  background-color: 
+  background-color: #99ff99;
 }
 
 /* player Selection section */
 
+#number_player_selection {
+  display: flex;
+  flex-direction: column;
+}
 
+#number_player_selection h2 {
+  font-size: 2em;
+  margin-right: 2em;
+  color: #004d00;
+}
+
+.selector {
+  margin-top: 2em;
+  margin-left: 1.2em;
+  font-size: 2em;
+  padding: 1em;
+  background-color: #004d00;
+  color: #99ff99;
+}
+
+.selector:active {
+  background-color: #800000;
+  color: #ff6666;
+}
 
 /* Symbol Selection section */
+
+#select_nought_or_cross {
+  display: flex;
+  flex-direction: column;
+}
+
+#select_nought_or_cross h2 {
+  margin-left: 1.3em;
+  margin-top: 1.2em;
+  font-size: 2em;
+  color: #004d00;
+}
+
+#symbol_buttons {
+  display: flex;
+  align-items: center;
+  padding-right: 3em;
+}
+
+#symbol_buttons p {
+  font-size: 3em;
+  margin: 1em;
+  margin-left: 1.7em;
+  margin-top: 1em;
+  color: #004d00;
+}
+
+#symbol_buttons button {
+  font-size: 3em;
+  margin: 0;
+  margin-left: 1em;
+  margin-top: 0.4em;
+
+}
 
 /* Board section */
 .main_selectors {
@@ -41,5 +98,4 @@ h1 {
   width: 2em;
   height: 2em;
   background-color: #006600;
-  margin: 0.5em;
 }
