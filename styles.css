@@ -14,6 +14,7 @@ body {
 h1 {
   font-size: 2em;
   color: #003300;
+  margin: 0;
 }
 
 .container {
@@ -92,10 +93,49 @@ h1 {
 /* Board section */
 .main_selectors {
   display: flex;
+  padding: 0;
 }
 
 .main_selectors div {
-  width: 2em;
-  height: 2em;
-  background-color: #006600;
+  width: 13.2em;
+  height: 8.2em;
+  opacity: 0.8;
+  margin: 0;
+}
+
+#top_mid {
+  border-right: 6px solid #004d00;
+  border-left: 6px solid #004d00;
+}
+
+.mid {
+  border-bottom: 6px solid #004d00;
+  border-top: 6px solid #004d00;
+}
+#mid_center {
+  border-left: 6px solid #004d00;
+  border-right: 6px solid #004d00;
+}
+
+#bottom_mid {
+  border-left: 6px solid #004d00;
+  border-right: 6px solid #004d00;
+}
+
+/* Player Turn titles */
+
+.player_turn {
+  display: flex;
+  padding-top: 0.5em;
+}
+
+.player_turn h3 {
+  padding-left: 2em;
+  padding-right: 2em;
+  margin: 0;
+  font-size: 1.5em;
+  color: #003300;
+  border-top: 6px solid #008000;
+  border-left: 6px solid #008000;
+  border-right: 6px solid #008000;
 }

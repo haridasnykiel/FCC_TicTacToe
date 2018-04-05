@@ -2,6 +2,8 @@ $(document).ready(function(){
   var game = new Game();
   $('#game_in_play').hide();
   $('#select_nought_or_cross').hide();
+  $('.player_turn').animate({opacity: 0 }, 100 );
+
 
 });
 
@@ -58,6 +60,7 @@ function nextPage(pageNum) {
   } else if(pageNum == 3) {
     $('#game_in_play').show(400);
     $('#select_nought_or_cross').hide(400);
+    $('#p_one').animate({opacity: 0.9 }, 400 ); // This line is not being called. Requires investigation.
   }
 
 }
