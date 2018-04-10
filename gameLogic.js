@@ -41,7 +41,8 @@ Game.prototype.eventListeners = function() {
 
   $(".play").click(function(event){
     event.preventDefault();
-    this.play();
+    var eventTarget = event.currentTarget.attributes[2].nodeType
+    this.play(eventTarget);
   }.bind(this));
 
 }
@@ -61,9 +62,9 @@ Game.prototype.setBotPlayer = function(isBot) {
 }
 
 Game.prototype.play = function(elementValue) {
-  if(this.WhosTurn = "One") {
+  if(this.WhosTurn = "One") { //Look into enums for the play symbol and the whos turn symbol. 
     if(this.PlayerOne.PlaySymbol == "X") {
-      $('.play :input[value='+elementValue+']').prepend('<img src="./images/cross.png" />');
+      $('.play :input[value='+elementValue+']').prepend('<img src="./images/cross.png" />'); // This is not adding the image to the div element.
     }
   }
 }
