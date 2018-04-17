@@ -101,6 +101,9 @@ h1 {
   height: 8.2em;
   opacity: 0.8;
   margin: 0;
+  padding: 1em;
+  padding-bottom: 0.5em;
+  padding-left: 4em;
 }
 
 #top_mid {
@@ -122,14 +125,6 @@ h1 {
   border-right: 6px solid #004d00;
 }
 
-.play {
-  display: flex;
-  align-items: center;
-}
-
-img {
-  margin-left: 3.5em;
-}
 /* Player Turn titles */
 
 .player_turn {

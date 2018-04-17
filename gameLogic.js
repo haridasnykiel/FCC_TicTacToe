@@ -65,23 +65,57 @@ Game.prototype.setBotPlayer = function(isBot) {
 }
 
 Game.prototype.play = function(elementId) {
-  if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
-    this.printSymbolToBoard(this.PlayerOne.PlaySymbol, elementId)
-    this.WhosTurn = PlayerTurnEnum.PlayerTwo
-  } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
-    this.printSymbolToBoard(this.PlayerTwo.PlaySymbol, elementId)
-    this.WhosTurn = PlayerTurnEnum.PlayerOne
+  if(!$('#'+elementId).hasClass("has_symbol")) {
+    if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
+      this.printSymbolToBoard(this.PlayerOne.PlaySymbol, elementId)
+      this.WhosTurn = PlayerTurnEnum.PlayerTwo
+      this.PlayerOne.Moves.push(parseInt($('#'+elementId).attr('value')));
+      this.checkWinner(this.PlayerOne.Moves)
+    } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
+      this.printSymbolToBoard(this.PlayerTwo.PlaySymbol, elementId)
+      this.WhosTurn = PlayerTurnEnum.PlayerOne
+      this.PlayerTwo.Moves.push(parseInt($('#'+elementId).attr('value')));
+      this.checkWinner(this.PlayerTwo.Moves)
+    }
+    playerTitleToShow(this.WhosTurn);
   }
 }
 
 Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
-  if(!$('#'+elementId).hasClass("symbol_in_element")) {
-    if(playerSymbol == PlaySymbolEnum.cross) {
-      $('#'+elementId).prepend('<img src="./images/cross.png" />').addClass( "symbol_in_element" );
-    } else if(playerSymbol == PlaySymbolEnum.nought) {
-      $('#'+elementId).prepend('<img src="./images/nought.png" />').addClass( "symbol_in_element" );;
+  if(playerSymbol == PlaySymbolEnum.cross) {
+    $('#'+elementId).prepend('<img src="./images/cross.png" />');
+  } else if(playerSymbol == PlaySymbolEnum.nought) {
+    $('#'+elementId).prepend('<img src="./images/nought.png" />');
+  }
+  $('#'+elementId).addClass("has_symbol").css("background-color", "#79876c");
+}
+
+Game.prototype.checkWinner = function(playerTurns) {
+  var playerWinPoints = 0;
+  for(i = 0; i < this.WinningCombinations.length; i++) {
+    this.WinningCombinations[i].each(function(index, element){
+      if(playerTurns.indexOf(element) != -1) {
+        playerWinPoints++;
+      }
+    });
+    if(playerWinPoints == winCombination.length) {
+      alert("Winner");
     }
   }
+
+}
+
+function playerTitleToShow(whosTurn) {
+  if(whosTurn == PlayerTurnEnum.PlayerTwo) {
+    playerTurnTitle(0, 0.9);
+  } else if(whosTurn == PlayerTurnEnum.PlayerOne) {
+    playerTurnTitle(0.9, 0);
+  }
+}
+
+function playerTurnTitle(pOneOpacity, pTwoOpacity) {
+  $('#p_two').animate({opacity: pTwoOpacity }, 200 );
+  $('#p_one').animate({opacity: pOneOpacity }, 200 );
 }
 
 function nextPage(pageNum) {
