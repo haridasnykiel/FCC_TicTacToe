@@ -122,6 +122,14 @@ h1 {
   border-right: 6px solid #004d00;
 }
 
+.play {
+  display: flex;
+  align-items: center;
+}
+
+img {
+  margin-left: 3.5em;
+}
 /* Player Turn titles */
 
 .player_turn {

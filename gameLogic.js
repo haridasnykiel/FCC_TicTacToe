@@ -75,10 +75,12 @@ Game.prototype.play = function(elementId) {
 }
 
 Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
-  if(playerSymbol == PlaySymbolEnum.cross) {
-    $('#'+elementId).prepend('<img src="./images/cross.png" />');
-  } else if(playerSymbol == PlaySymbolEnum.nought) {
-    $('#'+elementId).prepend('<img src="./images/nought.png" />');
+  if(!$('#'+elementId).hasClass("symbol_in_element")) {
+    if(playerSymbol == PlaySymbolEnum.cross) {
+      $('#'+elementId).prepend('<img src="./images/cross.png" />').addClass( "symbol_in_element" );
+    } else if(playerSymbol == PlaySymbolEnum.nought) {
+      $('#'+elementId).prepend('<img src="./images/nought.png" />').addClass( "symbol_in_element" );;
+    }
   }
 }
 
