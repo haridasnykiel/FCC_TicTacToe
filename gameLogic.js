@@ -65,20 +65,26 @@ Game.prototype.setBotPlayer = function(isBot) {
 }
 
 Game.prototype.play = function(elementId) {
-  if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
-    this.printSymbolToBoard(this.PlayerOne.PlaySymbol, elementId)
-    this.WhosTurn = PlayerTurnEnum.PlayerTwo
-  } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
-    this.printSymbolToBoard(this.PlayerTwo.PlaySymbol, elementId)
-    this.WhosTurn = PlayerTurnEnum.PlayerOne
+  if(!$('#'+elementId).hasClass("has_symbol")) {
+    if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
+      this.printSymbolToBoard(this.PlayerOne.PlaySymbol, elementId)
+      this.WhosTurn = PlayerTurnEnum.PlayerTwo
+      $('#p_two').animate({opacity: 0.9 }, 200 );
+      $('#p_one').animate({opacity: 0 }, 200 );
+    } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
+      this.printSymbolToBoard(this.PlayerTwo.PlaySymbol, elementId)
+      this.WhosTurn = PlayerTurnEnum.PlayerOne
+      $('#p_two').animate({opacity: 0 }, 200 );
+      $('#p_one').animate({opacity: 0.9 }, 200 );
+    }
   }
 }
 
 Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
   if(playerSymbol == PlaySymbolEnum.cross) {
-    $('#'+elementId).prepend('<img src="./images/cross.png" />');
+    $('#'+elementId).prepend('<img src="./images/cross.png" />').addClass("has_symbol");
   } else if(playerSymbol == PlaySymbolEnum.nought) {
-    $('#'+elementId).prepend('<img src="./images/nought.png" />');
+    $('#'+elementId).prepend('<img src="./images/nought.png" />').addClass("has_symbol");
   }
 }
 

@@ -101,6 +101,9 @@ h1 {
   height: 8.2em;
   opacity: 0.8;
   margin: 0;
+  padding: 1em;
+  padding-bottom: 0.5em;
+  padding-left: 4em;
 }
 
 #top_mid {
