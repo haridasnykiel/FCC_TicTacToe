@@ -91,18 +91,18 @@ Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
 }
 
 Game.prototype.checkWinner = function(playerTurns) {
-  var playerWinPoints = 0;
+  if(playerTurns.length < 3) return
   for(i = 0; i < this.WinningCombinations.length; i++) {
-    this.WinningCombinations[i].each(function(index, element){
+    var playerWinPoints = 0;
+    $.each(this.WinningCombinations[i], function(index, element){
       if(playerTurns.indexOf(element) != -1) {
         playerWinPoints++;
       }
     });
-    if(playerWinPoints == winCombination.length) {
+    if(playerWinPoints == this.WinningCombinations[i].length) {
       alert("Winner");
     }
   }
-
 }
 
 function playerTitleToShow(whosTurn) {
