@@ -2,9 +2,7 @@ $(document).ready(function(){
   var game = new Game();
   $('#game_in_play').hide();
   $('#select_nought_or_cross').hide();
-  $('.player_turn').animate({opacity: 0 }, 100 );
-
-
+  $('.player_turn').animate({opacity: 0 }, 50 );
 });
 
 const PlaySymbolEnum = Object.freeze({cross:"X", nought:"O" });
@@ -65,19 +63,17 @@ Game.prototype.setBotPlayer = function(isBot) {
 }
 
 Game.prototype.play = function(elementId) {
+  playerTitleToShow(this.WhosTurn);
   if(!$('#'+elementId).hasClass("has_symbol")) {
     if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
-      this.printSymbolToBoard(this.PlayerOne.PlaySymbol, elementId)
-      this.WhosTurn = PlayerTurnEnum.PlayerTwo
+      this.WhosTurn = PlayerTurnEnum.PlayerTwo;
       this.PlayerOne.Moves.push(parseInt($('#'+elementId).attr('value')));
-      this.checkWinner(this.PlayerOne.Moves)
+      this.checkWinner(this.PlayerOne, elementId, PlayerTurnEnum.PlayerOne);
     } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
-      this.printSymbolToBoard(this.PlayerTwo.PlaySymbol, elementId)
-      this.WhosTurn = PlayerTurnEnum.PlayerOne
+      this.WhosTurn = PlayerTurnEnum.PlayerOne;
       this.PlayerTwo.Moves.push(parseInt($('#'+elementId).attr('value')));
-      this.checkWinner(this.PlayerTwo.Moves)
+      this.checkWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
     }
-    playerTitleToShow(this.WhosTurn);
   }
 }
 
@@ -90,25 +86,36 @@ Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
   $('#'+elementId).addClass("has_symbol").css("background-color", "#79876c");
 }
 
-Game.prototype.checkWinner = function(playerTurns) {
-  if(playerTurns.length < 3) return
+Game.prototype.checkWinner = function(player, elementId, playerNum) {
+  this.printSymbolToBoard(player.PlaySymbol, elementId)
+  if(player.Moves.length < 3) return
   for(i = 0; i < this.WinningCombinations.length; i++) {
     var playerWinPoints = 0;
     $.each(this.WinningCombinations[i], function(index, element){
-      if(playerTurns.indexOf(element) != -1) {
+      if(player.Moves.indexOf(element) != -1) {
         playerWinPoints++;
       }
     });
     if(playerWinPoints == this.WinningCombinations[i].length) {
-      alert("Winner");
+      this.winMessage(player, this.WinningCombinations[i], playerNum)
+      break;
     }
   }
 }
 
-function playerTitleToShow(whosTurn) {
-  if(whosTurn == PlayerTurnEnum.PlayerTwo) {
+Game.prototype.winMessage = function(player, allWinValues, playerNum) {
+  $.each(allWinValues, function(index, value) {
+    $('.play[value="'+value+'"]').animate({
+      backgroundColor: '#9D2599'
+    }, 200 );
+  });
+  playerTitleToShow(playerNum);
+}
+
+function playerTitleToShow(player) {
+  if(player == PlayerTurnEnum.PlayerTwo) {
     playerTurnTitle(0, 0.9);
-  } else if(whosTurn == PlayerTurnEnum.PlayerOne) {
+  } else if(player == PlayerTurnEnum.PlayerOne) {
     playerTurnTitle(0.9, 0);
   }
 }
