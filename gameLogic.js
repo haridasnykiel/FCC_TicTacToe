@@ -3,6 +3,7 @@ $(document).ready(function(){
   $('#game_in_play').hide();
   $('#select_nought_or_cross').hide();
   $('.player_turn').animate({opacity: 0 }, 50 );
+  $('.wins').animate({opacity: 0}, 50 );
 });
 
 const PlaySymbolEnum = Object.freeze({cross:"X", nought:"O" });
@@ -20,6 +21,7 @@ var Player = function() {
   this.IsBot = false;
   this.PlaySymbol;
   this.Moves = [];
+  this.Wins = 0;
 }
 
 Game.prototype.eventListeners = function() {
@@ -109,7 +111,29 @@ Game.prototype.winMessage = function(player, allWinValues, playerNum) {
       backgroundColor: '#9D2599'
     }, 200 );
   });
+  player.Wins++;
   playerTitleToShow(playerNum);
+  if(player.Wins == 1) {
+    this.addToPlayerScore(player.Wins, playerNum);
+    this.reset();
+  }
+
+}
+
+Game.prototype.addToPlayerScore = function(wins, playerNum) {
+  $("#"+playerNum.toString()).html(wins).animate({
+    opacity: 1,
+  }, 400 );
+}
+
+Game.prototype.reset = function() {
+  this.PlayerOne.Moves = [];
+  this.PlayerTwo.Moves = [];
+  this.WhosTurn = PlayerTurnEnum.PlayerOne;
+  playerTitleToShow(this.WhosTurn);
+  $(".has_symbol").empty();
+  $('.has_symbol').animate({ backgroundColor: '#99ff99' }, 200 );
+  $(".has_symbol").removeClass("has_symbol");
 }
 
 function playerTitleToShow(player) {
