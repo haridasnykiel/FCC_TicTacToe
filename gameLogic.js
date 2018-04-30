@@ -65,7 +65,6 @@ Game.prototype.setBotPlayer = function(isBot) {
 }
 
 Game.prototype.play = function(elementId) {
-  playerTitleToShow(this.WhosTurn);
   if(!$('#'+elementId).hasClass("has_symbol")) {
     if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
       this.WhosTurn = PlayerTurnEnum.PlayerTwo;
@@ -76,6 +75,7 @@ Game.prototype.play = function(elementId) {
       this.PlayerTwo.Moves.push(parseInt($('#'+elementId).attr('value')));
       this.checkWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
     }
+    playerTitleToShow(this.WhosTurn);
   }
 }
 
@@ -112,8 +112,8 @@ Game.prototype.winMessage = function(player, allWinValues, playerNum) {
     }, 200 );
   });
   player.Wins++;
-  playerTitleToShow(playerNum);
-  if(player.Wins == 1) {
+  playerTitleToShow(playerNum, true);
+  if(player.Wins >= 1) {
     this.addToPlayerScore(player.Wins, playerNum);
     this.reset();
   }
@@ -132,16 +132,20 @@ Game.prototype.reset = function() {
   this.WhosTurn = PlayerTurnEnum.PlayerOne;
   playerTitleToShow(this.WhosTurn);
   $(".has_symbol").empty();
-  $('.has_symbol').animate({ backgroundColor: '#99ff99' }, 200 );
+  $('.has_symbol').animate({ backgroundColor: '#99ff99' }, 400 );
   $(".has_symbol").removeClass("has_symbol");
+  $('.player_turn h3').animate({backgroundColor: '#99ff99' }, 200 );
 }
 
-function playerTitleToShow(player) {
+function playerTitleToShow(player, isWinner = false) {
   if(player == PlayerTurnEnum.PlayerTwo) {
     playerTurnTitle(0, 0.9);
+    if(isWinner) { $('#p_two').animate({backgroundColor: '#ED73F2' }, 200 ); }
   } else if(player == PlayerTurnEnum.PlayerOne) {
     playerTurnTitle(0.9, 0);
+    if(isWinner) { $('#p_one').animate({backgroundColor: '#ED73F2' }, 200 ); }
   }
+ 
 }
 
 function playerTurnTitle(pOneOpacity, pTwoOpacity) {
