@@ -2,8 +2,9 @@ $(document).ready(function(){
   var game = new Game();
   $('#game_in_play').hide();
   $('#select_nought_or_cross').hide();
+  $('#reset_all').hide();
   $('.player_turn').animate({opacity: 0 }, 50 );
-  $('.wins').animate({opacity: 0}, 50 );
+  $('.wins').hide();
 });
 
 const PlaySymbolEnum = Object.freeze({cross:"X", nought:"O" });
@@ -48,6 +49,10 @@ Game.prototype.eventListeners = function() {
     this.play(event.currentTarget.id);
   }.bind(this));
 
+  $("#reset_all").click(function(event){
+    event.preventDefault();
+    this.resetAll();
+  }.bind(this));
 }
 
 Game.prototype.setSymbols = function(symbol) {
@@ -76,6 +81,7 @@ Game.prototype.play = function(elementId) {
       this.checkWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
     }
     playerTitleToShow(this.WhosTurn);
+    this.checkIsDraw();
   }
 }
 
@@ -105,6 +111,13 @@ Game.prototype.checkWinner = function(player, elementId, playerNum) {
   }
 }
 
+Game.prototype.checkIsDraw = function() {
+  var eles = $('.has_symbol').length;
+  if($('.has_symbol').length == 9) {
+    this.reset();
+  }
+}
+
 Game.prototype.winMessage = function(player, allWinValues, playerNum) {
   $.each(allWinValues, function(index, value) {
     $('.play[value="'+value+'"]').animate({
@@ -121,9 +134,7 @@ Game.prototype.winMessage = function(player, allWinValues, playerNum) {
 }
 
 Game.prototype.addToPlayerScore = function(wins, playerNum) {
-  $("#"+playerNum.toString()).html(wins).animate({
-    opacity: 1,
-  }, 400 );
+  $("#"+playerNum.toString()).html(wins).show(400);
 }
 
 Game.prototype.reset = function() {
@@ -137,6 +148,18 @@ Game.prototype.reset = function() {
   $('.player_turn h3').animate({backgroundColor: '#99ff99' }, 200 );
 }
 
+Game.prototype.resetAll = function() {
+  this.reset();
+  this.PlayerOne = new Player();
+  this.PlayerTwo = new Player();
+  $('#game_in_play').hide();
+  $('#select_nought_or_cross').hide();
+  $('#reset_all').hide();
+  $('.player_turn').animate({opacity: 0 }, 50 );
+  $('.wins').hide();
+  $('#number_player_selection').show(500);
+}
+
 function playerTitleToShow(player, isWinner = false) {
   if(player == PlayerTurnEnum.PlayerTwo) {
     playerTurnTitle(0, 0.9);
@@ -145,7 +168,7 @@ function playerTitleToShow(player, isWinner = false) {
     playerTurnTitle(0.9, 0);
     if(isWinner) { $('#p_one').animate({backgroundColor: '#ED73F2' }, 200 ); }
   }
- 
+
 }
 
 function playerTurnTitle(pOneOpacity, pTwoOpacity) {
@@ -160,6 +183,7 @@ function nextPage(pageNum) {
   } else if(pageNum == 3) {
     $('#game_in_play').show(400);
     $('#select_nought_or_cross').hide(400);
+    $('#reset_all').show(400);
     $('.player_turn').animate({opacity: 0.9 }, 400 );
     $('#p_two').animate({opacity: 0 }, 50 );
   }
