@@ -124,13 +124,11 @@ Game.prototype.winMessage = function(player, allWinValues, playerNum) {
       backgroundColor: '#9D2599'
     }, 200 );
   });
+  displayWinMessage(playerNum)
   player.Wins++;
   playerTitleToShow(playerNum, true);
-  if(player.Wins >= 1) {
-    this.addToPlayerScore(player.Wins, playerNum);
-    this.reset();
-  }
-
+  this.addToPlayerScore(player.Wins, playerNum);
+  this.reset();
 }
 
 Game.prototype.addToPlayerScore = function(wins, playerNum) {
@@ -158,6 +156,15 @@ Game.prototype.resetAll = function() {
   $('.player_turn').animate({opacity: 0 }, 50 );
   $('.wins').hide();
   $('#number_player_selection').show(500);
+}
+
+function displayWinMessage(playerNum) {
+  $(".container").append("<h1 id='winner'>Player "+playerNum+" WINS!!!!</h1>");
+  $("#winner").hide();
+  $("#winner").show(500);
+  setTimeout(function(){
+    $("#winner").remove();
+  }, 2000);
 }
 
 function playerTitleToShow(player, isWinner = false) {
