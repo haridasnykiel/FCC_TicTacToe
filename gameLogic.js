@@ -161,10 +161,10 @@ Game.prototype.resetAll = function() {
 function displayWinMessage(playerNum) {
   $(".container").append("<h1 id='winner'>Player "+playerNum+" WINS!!!!</h1>");
   $("#winner").hide();
-  $("#winner").show(500);
+  $("#winner").show(600,'easeOutBounce');
   setTimeout(function(){
     $("#winner").remove();
-  }, 2000);
+  }, 1500);
 }
 
 function playerTitleToShow(player, isWinner = false) {
