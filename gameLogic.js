@@ -70,6 +70,7 @@ Game.prototype.setBotPlayer = function(isBot) {
 }
 
 Game.prototype.play = function(elementId) {
+  var board = [1,2,3,4,5,6,7,8,9];
   if(!$('#'+elementId).hasClass("has_symbol")) {
     if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
       this.WhosTurn = PlayerTurnEnum.PlayerTwo;
@@ -79,10 +80,18 @@ Game.prototype.play = function(elementId) {
       this.WhosTurn = PlayerTurnEnum.PlayerOne;
       this.PlayerTwo.Moves.push(parseInt($('#'+elementId).attr('value')));
       this.checkWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
+      if(this.PlayerTwo.IsBot) {
+        this.miniMax();
+      }
     }
     playerTitleToShow(this.WhosTurn);
     this.checkIsDraw();
   }
+}
+
+
+Game.prototype.miniMax = function() {
+
 }
 
 Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
@@ -175,7 +184,6 @@ function playerTitleToShow(player, isWinner = false) {
     playerTurnTitle(0.9, 0);
     if(isWinner) { $('#p_one').animate({backgroundColor: '#ED73F2' }, 200 ); }
   }
-
 }
 
 function playerTurnTitle(pOneOpacity, pTwoOpacity) {
