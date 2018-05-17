@@ -76,24 +76,22 @@ Game.prototype.play = function(elementId) {
       this.WhosTurn = PlayerTurnEnum.PlayerTwo;
       this.PlayerOne.Moves.push(parseInt($('#'+elementId).attr('value')));
       this.checkWinner(this.PlayerOne, elementId, PlayerTurnEnum.PlayerOne);
-      this.setPlayerMoveToBoard(this.PlayerOne, elementId);
+      this.setPlayerMoveToBoardArray(this.PlayerOne, elementId);
     } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
       this.WhosTurn = PlayerTurnEnum.PlayerOne;
       this.PlayerTwo.Moves.push(parseInt($('#'+elementId).attr('value')));
       this.checkWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
-      this.setPlayerMoveToBoard(this.PlayerTwo, elementId);
+      this.setPlayerMoveToBoardArray(this.PlayerTwo, elementId);
     }
-
     if(this.PlayerTwo.IsBot) {
-      //this.miniMax(this.Board, player);
+      this.miniMax(this.Board, player);
     }
-
     playerTitleToShow(this.WhosTurn);
     this.checkIsDraw();
   }
 }
 
-Game.prototype.setPlayerMoveToBoard = function(player, elementId) {
+Game.prototype.setPlayerMoveToBoardArray = function(player, elementId) {
   var elementValue = parseInt($('#'+elementId).attr('value'))
   var index = this.Board.indexOf(elementValue)
   if(index !== -1) {
@@ -101,9 +99,13 @@ Game.prototype.setPlayerMoveToBoard = function(player, elementId) {
   }
 }
 
-// Game.prototype.miniMax = function(newBoard, player) {
-//
-// }
+function emptyIndexies(board){
+  return  board.filter(s => s != PlaySymbolEnum.cross && s != PlaySymbolEnum.nought);
+}
+
+Game.prototype.miniMax = function(newBoard, player) {
+  var availableSpots = emptyIndexies(newBoard);
+}
 
 Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
   if(playerSymbol == PlaySymbolEnum.cross) {
@@ -126,6 +128,19 @@ Game.prototype.checkWinner = function(player, elementId, playerNum) {
     });
     if(playerWinPoints == this.WinningCombinations[i].length) {
       this.winMessage(player, this.WinningCombinations[i], playerNum)
+    }
+  }
+}
+
+Game.prototype.isWinner = function(player) {
+  for(i = 0; i < this.WinningCombinations.length; i++) {
+    var playerWinPoints = 0;
+    $.each(this.WinningCombinations[i], function(index, element){
+      if(player.Moves.indexOf(element) != -1) {
+        playerWinPoints++;
+      }
+    });
+    if(playerWinPoints == this.WinningCombinations[i].length) {
       return true;
     } else {
       return false;
