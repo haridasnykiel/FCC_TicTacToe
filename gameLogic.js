@@ -14,15 +14,14 @@ var Game = function() {
   this.PlayerOne = new Player();
   this.PlayerTwo = new Player();
   this.WhosTurn = PlayerTurnEnum.PlayerOne;
-  this.WinningCombinations = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]]
-  this.Board = [1,2,3,4,5,6,7,8,9];
+  this.WinningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
+  this.Board = [0,1,2,3,4,5,6,7,8];
   this.eventListeners();
 }
 
 var Player = function() {
   this.IsBot = false;
   this.PlaySymbol;
-  this.Moves = [];
   this.Wins = 0;
 }
 
@@ -74,17 +73,18 @@ Game.prototype.play = function(elementId) {
   if(!$('#'+elementId).hasClass("has_symbol")) {
     if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
       this.WhosTurn = PlayerTurnEnum.PlayerTwo;
-      this.PlayerOne.Moves.push(parseInt($('#'+elementId).attr('value')));
-      this.checkWinner(this.PlayerOne, elementId, PlayerTurnEnum.PlayerOne);
       this.setPlayerMoveToBoardArray(this.PlayerOne, elementId);
+      this.checkIfPlayerWinsWinner(this.PlayerOne, elementId, PlayerTurnEnum.PlayerOne);
+      if(this.PlayerTwo.IsBot) {
+        this.miniMax(this.Board, this.PlayerOne);
+      }
     } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
       this.WhosTurn = PlayerTurnEnum.PlayerOne;
-      this.PlayerTwo.Moves.push(parseInt($('#'+elementId).attr('value')));
-      this.checkWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
       this.setPlayerMoveToBoardArray(this.PlayerTwo, elementId);
-    }
-    if(this.PlayerTwo.IsBot) {
-      this.miniMax(this.Board, player);
+      this.checkIfPlayerWinsWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
+      if(this.PlayerTwo.IsBot) {
+        this.miniMax(this.Board, this.PlayerTwo);
+      }
     }
     playerTitleToShow(this.WhosTurn);
     this.checkIsDraw();
@@ -92,8 +92,8 @@ Game.prototype.play = function(elementId) {
 }
 
 Game.prototype.setPlayerMoveToBoardArray = function(player, elementId) {
-  var elementValue = parseInt($('#'+elementId).attr('value'))
-  var index = this.Board.indexOf(elementValue)
+  var elementValue = parseInt($('#'+elementId).attr('value'));
+  var index = this.Board.indexOf(elementValue);
   if(index !== -1) {
     this.Board[index] = player.PlaySymbol;
   }
@@ -107,6 +107,42 @@ Game.prototype.miniMax = function(newBoard, player) {
   var availableSpots = emptyIndexies(newBoard);
 }
 
+Game.prototype.terminalState = function() {
+  if (winning(this.PlayerOne)){
+     return {score:-10};
+  }
+	else if (winning(this.PlayerTwo)){
+    return {score:10};
+	}
+  else if (availSpots.length === 0){
+  	return {score:0};
+  }
+}
+
+Game.prototype.isWinner = function(player, board) {
+  for(i = 0; i < this.WinningCombinations.length; i++) {
+    var playerWinPoints = 0;
+    $.each(this.WinningCombinations[i], function(index, element){
+      if(board[element].toString() == player.PlaySymbol) {
+        playerWinPoints++;
+      }
+    });
+    if(playerWinPoints == this.WinningCombinations[i].length) {
+      return true;
+    }
+  }
+  return false;
+}
+
+Game.prototype.checkIfPlayerWinsWinner = function(player, elementId, playerNum) {
+  this.printSymbolToBoard(player.PlaySymbol, elementId)
+  if(emptyIndexies(this.Board).length > 4) return
+  if(this.isWinner(player, this.Board)) {
+    this.winMessage(player, this.WinningCombinations[i], playerNum)
+  }
+
+}
+
 Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
   if(playerSymbol == PlaySymbolEnum.cross) {
     $('#'+elementId).prepend('<img src="./images/cross.png" />');
@@ -114,38 +150,6 @@ Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
     $('#'+elementId).prepend('<img src="./images/nought.png" />');
   }
   $('#'+elementId).addClass("has_symbol").css("background-color", "#79876c");
-}
-
-Game.prototype.checkWinner = function(player, elementId, playerNum) {
-  this.printSymbolToBoard(player.PlaySymbol, elementId)
-  if(player.Moves.length < 3) return
-  for(i = 0; i < this.WinningCombinations.length; i++) {
-    var playerWinPoints = 0;
-    $.each(this.WinningCombinations[i], function(index, element){
-      if(player.Moves.indexOf(element) != -1) {
-        playerWinPoints++;
-      }
-    });
-    if(playerWinPoints == this.WinningCombinations[i].length) {
-      this.winMessage(player, this.WinningCombinations[i], playerNum)
-    }
-  }
-}
-
-Game.prototype.isWinner = function(player) {
-  for(i = 0; i < this.WinningCombinations.length; i++) {
-    var playerWinPoints = 0;
-    $.each(this.WinningCombinations[i], function(index, element){
-      if(player.Moves.indexOf(element) != -1) {
-        playerWinPoints++;
-      }
-    });
-    if(playerWinPoints == this.WinningCombinations[i].length) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
 
 Game.prototype.checkIsDraw = function() {
@@ -172,8 +176,7 @@ Game.prototype.addToPlayerScore = function(wins, playerNum) {
 }
 
 Game.prototype.reset = function() {
-  this.PlayerOne.Moves = [];
-  this.PlayerTwo.Moves = [];
+  this.Board = [0,1,2,3,4,5,6,7,8];
   this.WhosTurn = PlayerTurnEnum.PlayerOne;
   playerTitleToShow(this.WhosTurn);
   $(".has_symbol").empty();
@@ -203,13 +206,13 @@ function displayWinMessage(playerNum) {
   }, 1500);
 }
 
-function playerTitleToShow(player, isWinner = false) {
+function playerTitleToShow(player, winner = false) {
   if(player == PlayerTurnEnum.PlayerTwo) {
     playerTurnTitle(0, 0.9);
-    if(isWinner) { $('#p_two').animate({backgroundColor: '#ED73F2' }, 200 ); }
+    if(winner) { $('#p_two').animate({backgroundColor: '#ED73F2' }, 200 ); }
   } else if(player == PlayerTurnEnum.PlayerOne) {
     playerTurnTitle(0.9, 0);
-    if(isWinner) { $('#p_one').animate({backgroundColor: '#ED73F2' }, 200 ); }
+    if(winner) { $('#p_one').animate({backgroundColor: '#ED73F2' }, 200 ); }
   }
 }
 
