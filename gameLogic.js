@@ -105,13 +105,21 @@ function emptyIndexies(board){
 
 Game.prototype.miniMax = function(newBoard, player) {
   var availableSpots = emptyIndexies(newBoard);
+  var moves = [];
+  var score = terminalState(newBoard, availableSpots);
+  for (var i = 0; i < availableSpots.length; i++) {
+    move = {};
+    move.index = newBoard[availableSpots[i]];
+  }
+
+
 }
 
-Game.prototype.terminalState = function() {
-  if (winning(this.PlayerOne)){
-     return {score:-10};
+Game.prototype.terminalState = function(newBoard, availSpots) {
+  if (this.isWinner(this.PlayerOne, newBoard)){
+    return {score:-10};
   }
-	else if (winning(this.PlayerTwo)){
+	else if (this.isWinner(this.PlayerTwo, newBoard)){
     return {score:10};
 	}
   else if (availSpots.length === 0){
