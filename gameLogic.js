@@ -28,7 +28,7 @@ var Player = function() {
 Game.prototype.eventListeners = function() {
   $("#button_players_one").click(function(event){
     event.preventDefault();
-    this.setBotPlayer(true);
+    this.PlayerTwo.IsBot = true;
     nextPage(2);
   }.bind(this));
 
@@ -65,26 +65,20 @@ Game.prototype.setSymbols = function(symbol) {
   }
 }
 
-Game.prototype.setBotPlayer = function(isBot) {
-  this.PlayerTwo.IsBot = isBot;
-}
-
 Game.prototype.play = function(elementId) {
+  var index
   if(!$('#'+elementId).hasClass("has_symbol")) {
     if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
       this.WhosTurn = PlayerTurnEnum.PlayerTwo;
       this.setPlayerMoveToBoardArray(this.PlayerOne, elementId);
       this.checkIfPlayerWinsWinner(this.PlayerOne, elementId, PlayerTurnEnum.PlayerOne);
-      if(this.PlayerTwo.IsBot) {
-        this.miniMax(this.Board, this.PlayerOne);
-      }
     } else if(this.WhosTurn == PlayerTurnEnum.PlayerTwo) {
       this.WhosTurn = PlayerTurnEnum.PlayerOne;
       this.setPlayerMoveToBoardArray(this.PlayerTwo, elementId);
       this.checkIfPlayerWinsWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
-      if(this.PlayerTwo.IsBot) {
-        this.miniMax(this.Board, this.PlayerTwo);
-      }
+    }
+    if(this.PlayerTwo.IsBot) {
+      index = this.miniMax(this.Board, this.PlayerTwo);
     }
     playerTitleToShow(this.WhosTurn);
     this.checkIsDraw();
@@ -105,27 +99,68 @@ function emptyIndexies(board){
 
 Game.prototype.miniMax = function(newBoard, player) {
   var availableSpots = emptyIndexies(newBoard);
-  var moves = [];
-  var score = terminalState(newBoard, availableSpots);
-  for (var i = 0; i < availableSpots.length; i++) {
-    move = {};
-    move.index = newBoard[availableSpots[i]];
-  }
-
-
-}
-
-Game.prototype.terminalState = function(newBoard, availSpots) {
+  // Terminal State
   if (this.isWinner(this.PlayerOne, newBoard)){
     return {score:-10};
   }
 	else if (this.isWinner(this.PlayerTwo, newBoard)){
     return {score:10};
 	}
-  else if (availSpots.length === 0){
+  else if (availableSpots.length === 0){
   	return {score:0};
   }
+
+
+  var moves = [];
+  var result;
+
+  for (var i = 0; i < availableSpots.length; i++) {
+    move = {};
+    move.index = newBoard[availableSpots[i]];
+
+    newBoard[availableSpots[i]] = player.PlaySymbol;
+
+    if(player == this.PlayerOne) {
+      result = this.miniMax(newBoard, this.PlayerTwo);
+      move.score = result.score;
+    } else {
+      result = this.miniMax(newBoard, this.PlayerOne);
+      move.score = result.score;
+    }
+
+    newBoard[availableSpots[i]] = move.index;
+
+    moves.push(move);
+
+  }
+  // if it is the computer's turn loop over the moves and choose the move with the highest score
+  var bestMove;
+  if(player === this.PlayerTwo){
+    var bestScore = -10000;
+    for(var i = 0; i < moves.length; i++){
+      if(moves[i].score > bestScore){
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }else{
+  // else loop over the moves and choose the move with the lowest score
+    var bestScore = 10000;
+    for(var i = 0; i < moves.length; i++){
+      if(moves[i].score < bestScore){
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }
+
+  // return the chosen move (object) from the moves array
+  return moves[bestMove];
 }
+
+// Game.prototype.terminalState = function(newBoard, availSpots) {
+//
+// }
 
 Game.prototype.isWinner = function(player, board) {
   for(i = 0; i < this.WinningCombinations.length; i++) {
