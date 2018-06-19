@@ -77,6 +77,7 @@ Game.prototype.play = function(elementId) {
       this.setPlayerMoveToBoardArray(this.PlayerTwo, elementId);
       this.checkIfPlayerWinsWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
     }
+
     if(this.PlayerTwo.IsBot) {
       index = this.miniMax(this.Board, this.PlayerTwo);
     }
@@ -110,9 +111,7 @@ Game.prototype.miniMax = function(newBoard, player) {
   	return {score:0};
   }
 
-
   var moves = [];
-  var result;
 
   for (var i = 0; i < availableSpots.length; i++) {
     move = {};
@@ -120,11 +119,11 @@ Game.prototype.miniMax = function(newBoard, player) {
 
     newBoard[availableSpots[i]] = player.PlaySymbol;
 
-    if(player == this.PlayerOne) {
-      result = this.miniMax(newBoard, this.PlayerTwo);
+    if(player === this.PlayerTwo) {
+      var result = this.miniMax(newBoard, this.PlayerOne);
       move.score = result.score;
     } else {
-      result = this.miniMax(newBoard, this.PlayerOne);
+      var result = this.miniMax(newBoard, this.PlayerTwo);
       move.score = result.score;
     }
 
@@ -158,11 +157,9 @@ Game.prototype.miniMax = function(newBoard, player) {
   return moves[bestMove];
 }
 
-// Game.prototype.terminalState = function(newBoard, availSpots) {
-//
-// }
-
 Game.prototype.isWinner = function(player, board) {
+  var emptySpots = emptyIndexies(this.Board)
+  if(emptySpots.length > 4) return false;
   for(i = 0; i < this.WinningCombinations.length; i++) {
     var playerWinPoints = 0;
     $.each(this.WinningCombinations[i], function(index, element){
@@ -179,7 +176,6 @@ Game.prototype.isWinner = function(player, board) {
 
 Game.prototype.checkIfPlayerWinsWinner = function(player, elementId, playerNum) {
   this.printSymbolToBoard(player.PlaySymbol, elementId)
-  if(emptyIndexies(this.Board).length > 4) return
   if(this.isWinner(player, this.Board)) {
     this.winMessage(player, this.WinningCombinations[i], playerNum)
   }
