@@ -99,62 +99,24 @@ function emptyIndexies(board){
 }
 
 Game.prototype.miniMax = function(newBoard, player) {
-  var availableSpots = emptyIndexies(newBoard);
-  // Terminal State
-  if (this.isWinner(this.PlayerOne, newBoard)){
-    return {score:-10};
+  //available spots
+  var availSpots = emptyIndexies(newBoard);
+
+  if (this.isWinner(newBoard, this.PlayerOne)){
+     return {score:-10};
   }
-	else if (this.isWinner(this.PlayerTwo, newBoard)){
+	else if (this.isWinner(newBoard, this.PlayerTwo)){
     return {score:10};
 	}
-  else if (availableSpots.length === 0){
+  else if (availSpots.length === 0){
   	return {score:0};
   }
 
-  var moves = [];
+  var moves = []
 
-  for (var i = 0; i < availableSpots.length; i++) {
-    move = {};
-    move.index = newBoard[availableSpots[i]];
-
-    newBoard[availableSpots[i]] = player.PlaySymbol;
-
-    if(player === this.PlayerTwo) {
-      var result = this.miniMax(newBoard, this.PlayerOne);
-      move.score = result.score;
-    } else {
-      var result = this.miniMax(newBoard, this.PlayerTwo);
-      move.score = result.score;
-    }
-
-    newBoard[availableSpots[i]] = move.index;
-
-    moves.push(move);
-
+  for (var i = 0; i < availSpots.length; i++) {
+    array[i]
   }
-  // if it is the computer's turn loop over the moves and choose the move with the highest score
-  var bestMove;
-  if(player === this.PlayerTwo){
-    var bestScore = -10000;
-    for(var i = 0; i < moves.length; i++){
-      if(moves[i].score > bestScore){
-        bestScore = moves[i].score;
-        bestMove = i;
-      }
-    }
-  }else{
-  // else loop over the moves and choose the move with the lowest score
-    var bestScore = 10000;
-    for(var i = 0; i < moves.length; i++){
-      if(moves[i].score < bestScore){
-        bestScore = moves[i].score;
-        bestMove = i;
-      }
-    }
-  }
-
-  // return the chosen move (object) from the moves array
-  return moves[bestMove];
 }
 
 Game.prototype.isWinner = function(player, board) {
