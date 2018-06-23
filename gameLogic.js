@@ -47,6 +47,10 @@ Game.prototype.eventListeners = function() {
   $(".play").click(function(event){
     event.preventDefault();
     this.play(event.currentTarget.id);
+    if(this.PlayerTwo.IsBot && this.WhosTurn === PlayerTurnEnum.PlayerTwo) {
+      var move = this.miniMax(this.Board, this.PlayerTwo);
+      $('.play[value="'+move.index+'"]').click();
+    }
   }.bind(this));
 
   $("#reset_all").click(function(event){
@@ -66,8 +70,8 @@ Game.prototype.setSymbols = function(symbol) {
 }
 
 Game.prototype.play = function(elementId) {
-  var index
   if(!$('#'+elementId).hasClass("has_symbol")) {
+    playerTitleToShow(this.WhosTurn);
     if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
       this.WhosTurn = PlayerTurnEnum.PlayerTwo;
       this.setPlayerMoveToBoardArray(this.PlayerOne, elementId);
@@ -77,11 +81,6 @@ Game.prototype.play = function(elementId) {
       this.setPlayerMoveToBoardArray(this.PlayerTwo, elementId);
       this.checkIfPlayerWinsWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
     }
-
-    if(this.PlayerTwo.IsBot) {
-      index = this.miniMax(this.Board, this.PlayerTwo);
-    }
-    playerTitleToShow(this.WhosTurn);
     this.checkIsDraw();
   }
 }
@@ -102,26 +101,72 @@ Game.prototype.miniMax = function(newBoard, player) {
   //available spots
   var availSpots = emptyIndexies(newBoard);
 
-  if (this.isWinner(newBoard, this.PlayerOne)){
+  // checks for the terminal states such as win, lose, and tie
+  //and returning a value accordingly
+  if (this.isWinner(this.PlayerOne, newBoard)){
      return {score:-10};
   }
-	else if (this.isWinner(newBoard, this.PlayerTwo)){
+	else if (this.isWinner(this.PlayerTwo, newBoard)){
     return {score:10};
 	}
   else if (availSpots.length === 0){
   	return {score:0};
   }
 
-  var moves = []
+  var moves = [];
 
   for (var i = 0; i < availSpots.length; i++) {
-    array[i]
+    //create an object for each and store the index of that spot
+    var move = {};
+    move.index = newBoard[availSpots[i]];
+
+    // set the empty spot to the current player
+    newBoard[availSpots[i]] = player.PlaySymbol;
+
+    /*collect the score resulted from calling minimax
+      on the opponent of the current player*/
+    if(player === this.PlayerTwo) {
+      var result = this.miniMax(newBoard, this.PlayerOne);
+      move.score = result.score;
+    } else {
+      var result = this.miniMax(newBoard, this.PlayerTwo);
+      move.score = result.score;
+    }
+
+    // reset the spot to empty
+    newBoard[availSpots[i]] = move.index;
+
+    // push the object to the array
+    moves.push(move);
   }
+
+  // if it is the computer's turn loop over the moves and choose the move with the highest score
+  var bestMove;
+  if(player === this.PlayerTwo){
+    var bestScore = -10000;
+    for(var i = 0; i < moves.length; i++){
+      if(moves[i].score > bestScore){
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }else{
+    // else loop over the moves and choose the move with the lowest score
+    var bestScore = 10000;
+    for(var i = 0; i < moves.length; i++){
+      if(moves[i].score < bestScore){
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }
+
+  // return the chosen move (object) from the moves array
+  return moves[bestMove];
 }
 
 Game.prototype.isWinner = function(player, board) {
-  var emptySpots = emptyIndexies(this.Board)
-  if(emptySpots.length > 4) return false;
+  if(emptyIndexies(this.Board).length > 4) return false;
   for(i = 0; i < this.WinningCombinations.length; i++) {
     var playerWinPoints = 0;
     $.each(this.WinningCombinations[i], function(index, element){
@@ -156,6 +201,7 @@ Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
 Game.prototype.checkIsDraw = function() {
   if($('.has_symbol').length == 9) {
     this.reset();
+    displayGameOverMessage("TIE!!!!!!!!");
   }
 }
 
@@ -165,7 +211,7 @@ Game.prototype.winMessage = function(player, allWinValues, playerNum) {
       backgroundColor: '#9D2599'
     }, 200 );
   });
-  displayWinMessage(playerNum)
+  displayGameOverMessage("Player "+playerNum+" WINS!!!!")
   player.Wins++;
   playerTitleToShow(playerNum, true);
   this.addToPlayerScore(player.Wins, playerNum);
@@ -198,8 +244,8 @@ Game.prototype.resetAll = function() {
   $('#number_player_selection').show(500);
 }
 
-function displayWinMessage(playerNum) {
-  $(".container").append("<h1 id='winner'>Player "+playerNum+" WINS!!!!</h1>");
+function displayGameOverMessage(displayMessage) {
+  $(".container").append("<h1 id='winner'>"+displayMessage+"</h1>");
   $("#winner").hide();
   $("#winner").show(600,'easeOutBounce');
   setTimeout(function(){
