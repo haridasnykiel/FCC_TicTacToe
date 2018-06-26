@@ -1,11 +1,29 @@
 $(document).ready(function(){
   var game = new Game();
+  showPlayerSelection();
+});
+
+function showPlayerSelection() {
   $('#game_in_play').hide();
   $('#select_nought_or_cross').hide();
   $('#reset_all').hide();
   $('.player_turn').animate({opacity: 0 }, 50 );
   $('.wins').hide();
-});
+  $('#number_player_selection').show(500);
+}
+
+function nextPage(pageNum) {
+  if(pageNum == 2) {
+    $('#number_player_selection').hide(400);
+    $('#select_nought_or_cross').show(400);
+  } else if(pageNum == 3) {
+    $('#game_in_play').show(400);
+    $('#select_nought_or_cross').hide(400);
+    $('#reset_all').show(400);
+    $('.player_turn').animate({opacity: 0.9 }, 400 );
+    $('#p_two').animate({opacity: 0 }, 50 );
+  }
+}
 
 const PlaySymbolEnum = Object.freeze({cross:"X", nought:"O" });
 const PlayerTurnEnum = Object.freeze({PlayerOne:1, PlayerTwo:2 });
@@ -47,10 +65,6 @@ Game.prototype.eventListeners = function() {
   $(".play").click(function(event){
     event.preventDefault();
     this.play(event.currentTarget.id);
-    if(this.PlayerTwo.IsBot && this.WhosTurn === PlayerTurnEnum.PlayerTwo) {
-      var move = this.miniMax(this.Board, this.PlayerTwo);
-      $('.play[value="'+move.index+'"]').click();
-    }
   }.bind(this));
 
   $("#reset_all").click(function(event){
@@ -71,7 +85,6 @@ Game.prototype.setSymbols = function(symbol) {
 
 Game.prototype.play = function(elementId) {
   if(!$('#'+elementId).hasClass("has_symbol")) {
-    playerTitleToShow(this.WhosTurn);
     if(this.WhosTurn == PlayerTurnEnum.PlayerOne) {
       this.WhosTurn = PlayerTurnEnum.PlayerTwo;
       this.setPlayerMoveToBoardArray(this.PlayerOne, elementId);
@@ -81,7 +94,12 @@ Game.prototype.play = function(elementId) {
       this.setPlayerMoveToBoardArray(this.PlayerTwo, elementId);
       this.checkIfPlayerWinsWinner(this.PlayerTwo, elementId, PlayerTurnEnum.PlayerTwo);
     }
+    playerTitleToShow(this.WhosTurn);
     this.checkIsDraw();
+    if(this.PlayerTwo.IsBot && this.WhosTurn === PlayerTurnEnum.PlayerTwo) {
+      var move = this.miniMax(this.Board, this.PlayerTwo);
+      setTimeout($('.play[value="'+move.index+'"]').click(), 1000);
+    }
   }
 }
 
@@ -139,7 +157,6 @@ Game.prototype.miniMax = function(newBoard, player) {
     // push the object to the array
     moves.push(move);
   }
-
   // if it is the computer's turn loop over the moves and choose the move with the highest score
   var bestMove;
   if(player === this.PlayerTwo){
@@ -160,7 +177,6 @@ Game.prototype.miniMax = function(newBoard, player) {
       }
     }
   }
-
   // return the chosen move (object) from the moves array
   return moves[bestMove];
 }
@@ -201,7 +217,7 @@ Game.prototype.printSymbolToBoard = function(playerSymbol, elementId) {
 Game.prototype.checkIsDraw = function() {
   if($('.has_symbol').length == 9) {
     this.reset();
-    displayGameOverMessage("TIE!!!!!!!!");
+    displayGameOverMessage("  ITS A TIE!!!!!!!!!!");
   }
 }
 
@@ -236,12 +252,7 @@ Game.prototype.resetAll = function() {
   this.reset();
   this.PlayerOne = new Player();
   this.PlayerTwo = new Player();
-  $('#game_in_play').hide();
-  $('#select_nought_or_cross').hide();
-  $('#reset_all').hide();
-  $('.player_turn').animate({opacity: 0 }, 50 );
-  $('.wins').hide();
-  $('#number_player_selection').show(500);
+  showPlayerSelection();
 }
 
 function displayGameOverMessage(displayMessage) {
@@ -266,18 +277,4 @@ function playerTitleToShow(player, winner = false) {
 function playerTurnTitle(pOneOpacity, pTwoOpacity) {
   $('#p_two').animate({opacity: pTwoOpacity }, 200 );
   $('#p_one').animate({opacity: pOneOpacity }, 200 );
-}
-
-function nextPage(pageNum) {
-  if(pageNum == 2) {
-    $('#number_player_selection').hide(400);
-    $('#select_nought_or_cross').show(400);
-  } else if(pageNum == 3) {
-    $('#game_in_play').show(400);
-    $('#select_nought_or_cross').hide(400);
-    $('#reset_all').show(400);
-    $('.player_turn').animate({opacity: 0.9 }, 400 );
-    $('#p_two').animate({opacity: 0 }, 50 );
-  }
-
 }
